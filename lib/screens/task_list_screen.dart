@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/task.dart';
 import 'task_form_screen.dart';
-import '../widgets/task_card.dart';
 import 'calendar_screen.dart';
+import '../widgets/task_card.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
@@ -59,7 +59,6 @@ class _TaskListScreenState extends State<TaskListScreen>
         .toList();
   }
 
-  // 締切順に並び替え
   List<Task> get _sortedTasks {
     final sorted = List<Task>.from(_tasks);
     sorted.sort((a, b) {
@@ -173,44 +172,20 @@ class _TaskListScreenState extends State<TaskListScreen>
           ],
         ),
       ),
-      body: _tasks.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.assignment_outlined,
-                      size: 64, color: Colors.grey[300]),
-                  const SizedBox(height: 16),
-                  Text(
-                    '課題がありません',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey[400],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '右下の＋ボタンで追加しましょう！',
-                    style: TextStyle(fontSize: 14, color: Colors.grey[400]),
-                  ),
-                ],
-              ),
-            )
-          : TabBarView(
-              controller: _tabController,
-              children: [
-                _buildAllTab(),
-                _buildSubjectTab(),
-                CalendarScreen(
-                  tasks: _tasks,
-                  subjects: _subjects,
-                  onToggleDone: _toggleDone,
-                  onDelete: _deleteTask,
-                  onEdit: (task) => _openForm(task: task),
-              ),
-            ],
-            ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          _buildAllTab(),
+          _buildSubjectTab(),
+          CalendarScreen(
+            tasks: _tasks,
+            subjects: _subjects,
+            onToggleDone: _toggleDone,
+            onDelete: _deleteTask,
+            onEdit: (task) => _openForm(task: task),
+          ),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openForm(),
         backgroundColor: const Color(0xFF3D5AFE),
@@ -223,8 +198,34 @@ class _TaskListScreenState extends State<TaskListScreen>
     );
   }
 
-  // すべてタブ：締切順に表示
+  // すべてタブ
   Widget _buildAllTab() {
+    if (_tasks.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.assignment_outlined,
+                size: 64, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              '課題がありません',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[400],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '右下の＋ボタンで追加しましょう！',
+              style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+            ),
+          ],
+        ),
+      );
+    }
+
     final incomplete = _sortedTasks.where((t) => !t.isDone).toList();
     final completed = _sortedTasks.where((t) => t.isDone).toList();
 
@@ -256,13 +257,30 @@ class _TaskListScreenState extends State<TaskListScreen>
     );
   }
 
-  // 科目別タブ：科目ごとにまとめて表示
+  // 科目別タブ
   Widget _buildSubjectTab() {
-    if (_subjects.isEmpty) {
+    if (_tasks.isEmpty) {
       return Center(
-        child: Text(
-          '課題がありません',
-          style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.assignment_outlined,
+                size: 64, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              '課題がありません',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[400],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '右下の＋ボタンで追加しましょう！',
+              style: TextStyle(fontSize: 14, color: Colors.grey[400]),
+            ),
+          ],
         ),
       );
     }
@@ -280,7 +298,6 @@ class _TaskListScreenState extends State<TaskListScreen>
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 科目ヘッダー
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
               child: Row(
@@ -313,7 +330,6 @@ class _TaskListScreenState extends State<TaskListScreen>
                 ],
               ),
             ),
-            // 科目の課題一覧
             ...incomplete.map((task) => TaskCard(
                   task: task,
                   subjects: _subjects,
@@ -359,7 +375,8 @@ class _SectionHeader extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
               color: const Color(0x269E9E9E),
               borderRadius: BorderRadius.circular(10),

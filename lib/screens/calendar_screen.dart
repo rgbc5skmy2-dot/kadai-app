@@ -46,7 +46,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
       backgroundColor: const Color(0xFFF5F6FA),
       body: Column(
         children: [
-          // カレンダー（コンパクト版）
+          // カレンダー
           Container(
             margin: const EdgeInsets.fromLTRB(12, 8, 12, 4),
             decoration: BoxDecoration(
@@ -72,15 +72,14 @@ class _CalendarScreenState extends State<CalendarScreen> {
                 });
               },
               eventLoader: _getTasksForDay,
-              // コンパクトサイズに設定
               rowHeight: 36,
               daysOfWeekHeight: 24,
               calendarStyle: CalendarStyle(
-                // セルのサイズを小さく
                 cellMargin: const EdgeInsets.all(2),
                 defaultTextStyle: const TextStyle(fontSize: 12),
                 weekendTextStyle: const TextStyle(fontSize: 12),
-                outsideTextStyle: TextStyle(fontSize: 12, color: Colors.grey[400]),
+                outsideTextStyle:
+                    TextStyle(fontSize: 12, color: Colors.grey[400]),
                 todayDecoration: BoxDecoration(
                   color: const Color(0xFF3D5AFE).withOpacity(0.2),
                   shape: BoxShape.circle,
@@ -99,13 +98,30 @@ class _CalendarScreenState extends State<CalendarScreen> {
                   color: Colors.white,
                   fontWeight: FontWeight.w700,
                 ),
-                markerDecoration: const BoxDecoration(
-                  color: Color(0xFFFF9800),
-                  shape: BoxShape.circle,
-                ),
-                markerSize: 5,
-                markersMaxCount: 3,
-                markerMargin: const EdgeInsets.symmetric(horizontal: 0.5),
+                // ドットは非表示にして独自で描画
+                markerSize: 0,
+              ),
+              // 独自のドット描画
+              calendarBuilders: CalendarBuilders(
+                markerBuilder: (context, day, events) {
+                  if (events.isEmpty) return const SizedBox.shrink();
+                  final tasks = events.cast<Task>();
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: tasks.take(3).map((task) {
+                      final color = getSubjectColor(task.subject, widget.subjects);
+                      return Container(
+                        width: 5,
+                        height: 5,
+                        margin: const EdgeInsets.symmetric(horizontal: 1),
+                        decoration: BoxDecoration(
+                          color: color,
+                          shape: BoxShape.circle,
+                        ),
+                      );
+                    }).toList(),
+                  );
+                },
               ),
               daysOfWeekStyle: const DaysOfWeekStyle(
                 weekdayStyle: TextStyle(

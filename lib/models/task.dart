@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-// 科目ごとに使う色のリスト
 const List<Color> subjectColors = [
-  Color(0xFF3D5AFE), // 青
-  Color(0xFFE53935), // 赤
-  Color(0xFF43A047), // 緑
-  Color(0xFFFF9800), // オレンジ
-  Color(0xFF8E24AA), // 紫
-  Color(0xFF00ACC1), // シアン
-  Color(0xFFD81B60), // ピンク
-  Color(0xFF6D4C41), // ブラウン
+  Color(0xFF3D5AFE),
+  Color(0xFFE53935),
+  Color(0xFF43A047),
+  Color(0xFFFF9800),
+  Color(0xFF8E24AA),
+  Color(0xFF00ACC1),
+  Color(0xFFD81B60),
+  Color(0xFF6D4C41),
 ];
 
 class Task {
@@ -19,6 +18,7 @@ class Task {
   DateTime dueDate;
   String dueTime;
   bool isDone;
+  String memo; // メモフィールドを追加
 
   Task({
     required this.id,
@@ -27,6 +27,7 @@ class Task {
     required this.dueDate,
     this.dueTime = '23:59',
     this.isDone = false,
+    this.memo = '', // デフォルトは空
   });
 
   Map<String, dynamic> toMap() {
@@ -37,6 +38,7 @@ class Task {
       'dueDate': dueDate.toIso8601String(),
       'dueTime': dueTime,
       'isDone': isDone,
+      'memo': memo,
     };
   }
 
@@ -48,12 +50,11 @@ class Task {
       dueDate: DateTime.parse(map['dueDate']),
       dueTime: map['dueTime'] ?? '23:59',
       isDone: map['isDone'],
+      memo: map['memo'] ?? '',
     );
   }
 }
 
-// 科目名からカラーを取得するヘルパー関数
-// 同じ科目名には常に同じ色が返る
 Color getSubjectColor(String subject, List<String> subjects) {
   if (subject.isEmpty) return const Color(0xFF3D5AFE);
   final index = subjects.indexOf(subject);

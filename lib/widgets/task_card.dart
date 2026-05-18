@@ -31,7 +31,6 @@ class TaskCard extends StatelessWidget {
         !task.isDone;
   }
 
-  // バッジ用の色（今日・締切切れのみ色付き）
   Color get _statusColor {
     if (task.isDone) return Colors.grey;
     if (_isOverdue) return const Color(0xFFE53935);
@@ -39,15 +38,54 @@ class TaskCard extends StatelessWidget {
     return Colors.grey;
   }
 
-  // 科目カラー
   Color get _subjectColor {
     return getSubjectColor(task.subject, subjects);
   }
 
-  // 日時テキストの色
   Color get _dateColor {
     if (task.isDone) return Colors.grey;
     if (_isOverdue || _isToday) return _statusColor;
+    return Colors.grey.shade500;
+  }
+
+  // カウントダウン文字列を返す
+  String get _countdown {
+    if (task.isDone) return '';
+    final now = DateTime.now();
+    // 締切日時を組み合わせる
+    final parts = task.dueTime.split(':');
+    final due = DateTime(
+      task.dueDate.year,
+      task.dueDate.month,
+      task.dueDate.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
+    final diff = due.difference(now);
+
+    if (diff.isNegative) return '締切切れ';
+    if (diff.inDays > 0) return 'あと${diff.inDays}日';
+    if (diff.inHours > 0) return 'あと${diff.inHours}時間';
+    if (diff.inMinutes > 0) return 'あと${diff.inMinutes}分';
+    return 'まもなく締切';
+  }
+
+  // カウントダウンの色
+  Color get _countdownColor {
+    if (task.isDone) return Colors.grey;
+    final now = DateTime.now();
+    final parts = task.dueTime.split(':');
+    final due = DateTime(
+      task.dueDate.year,
+      task.dueDate.month,
+      task.dueDate.day,
+      int.parse(parts[0]),
+      int.parse(parts[1]),
+    );
+    final diff = due.difference(now);
+    if (diff.isNegative) return const Color(0xFFE53935);
+    if (diff.inDays == 0) return const Color(0xFFFF9800);
+    if (diff.inDays <= 3) return const Color(0xFFFF9800);
     return Colors.grey.shade500;
   }
 
@@ -98,7 +136,7 @@ class TaskCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 科目名バッジ（科目カラー）
+                  // 科目名バッジ
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 2),
@@ -132,7 +170,7 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  // 締切日時（通常はグレー、今日・締切切れのみ色付き）
+                  // 締切日時とカウントダウン
                   Row(
                     children: [
                       Icon(Icons.schedule, size: 13, color: _dateColor),
@@ -146,6 +184,17 @@ class TaskCard extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
+                      // カウントダウン
+                      if (!task.isDone)
+                        Text(
+                          _countdown,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: _countdownColor,
+                          ),
+                        ),
+                      const SizedBox(width: 4),
                       if (_isToday && !task.isDone)
                         _Badge(
                             label: '今日締切',
@@ -158,6 +207,28 @@ class TaskCard extends StatelessWidget {
                         _Badge(label: '完了', color: Colors.grey),
                     ],
                   ),
+                  // メモ表示
+                  if (task.memo.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(Icons.notes,
+                            size: 12, color: Colors.grey[400]),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            task.memo,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[500],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

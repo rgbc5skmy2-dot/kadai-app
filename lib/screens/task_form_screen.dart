@@ -4,7 +4,7 @@ import '../models/task.dart';
 
 class TaskFormScreen extends StatefulWidget {
   final Task? task;
-  final List<String> subjects; // 登録済み科目リスト
+  final List<String> subjects;
 
   const TaskFormScreen({
     super.key,
@@ -19,6 +19,7 @@ class TaskFormScreen extends StatefulWidget {
 class _TaskFormScreenState extends State<TaskFormScreen> {
   final _subjectController = TextEditingController();
   final _titleController = TextEditingController();
+  final _memoController = TextEditingController();
   DateTime _dueDate = DateTime.now();
   TimeOfDay _dueTime = const TimeOfDay(hour: 23, minute: 59);
 
@@ -28,6 +29,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
     if (widget.task != null) {
       _subjectController.text = widget.task!.subject;
       _titleController.text = widget.task!.title;
+      _memoController.text = widget.task!.memo;
       _dueDate = widget.task!.dueDate;
       final parts = widget.task!.dueTime.split(':');
       _dueTime = TimeOfDay(
@@ -41,6 +43,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
   void dispose() {
     _subjectController.dispose();
     _titleController.dispose();
+    _memoController.dispose();
     super.dispose();
   }
 
@@ -95,6 +98,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
       dueDate: _dueDate,
       dueTime: _formattedTime,
       isDone: widget.task?.isDone ?? false,
+      memo: _memoController.text,
     );
     Navigator.pop(context, task);
   }
@@ -106,7 +110,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
         title: Text(widget.task == null ? '課題を追加' : '課題を編集'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -115,7 +119,7 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
             Autocomplete<String>(
               optionsBuilder: (textEditingValue) {
                 if (textEditingValue.text.isEmpty) {
-                  return widget.subjects; // 空のとき全候補を表示
+                  return widget.subjects;
                 }
                 return widget.subjects.where((s) => s
                     .toLowerCase()
@@ -125,7 +129,6 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                 _subjectController.text = value;
               },
               fieldViewBuilder: (context, controller, focusNode, onSubmitted) {
-                // 編集モードのとき既存の値をセット
                 if (widget.task != null && controller.text.isEmpty) {
                   controller.text = widget.task!.subject;
                 }
@@ -187,6 +190,19 @@ class _TaskFormScreenState extends State<TaskFormScreen> {
                   child: const Text('時間を選ぶ'),
                 ),
               ],
+            ),
+            const SizedBox(height: 16),
+            // メモ入力
+            TextField(
+              controller: _memoController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'メモ（任意）',
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.notes),
+                hintText: '例：教科書p.30参照、グループワーク など',
+                alignLabelWithHint: true,
+              ),
             ),
             const SizedBox(height: 32),
             // 保存ボタン
