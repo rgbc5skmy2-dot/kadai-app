@@ -31,17 +31,24 @@ class TaskCard extends StatelessWidget {
         !task.isDone;
   }
 
-  // 締切状態による色（完了・締切切れ・今日・通常）
+  // バッジ用の色（今日・締切切れのみ色付き）
   Color get _statusColor {
     if (task.isDone) return Colors.grey;
     if (_isOverdue) return const Color(0xFFE53935);
     if (_isToday) return const Color(0xFFFF9800);
-    return const Color(0xFF3D5AFE);
+    return Colors.grey;
   }
 
-  // 科目名による色
+  // 科目カラー
   Color get _subjectColor {
     return getSubjectColor(task.subject, subjects);
+  }
+
+  // 日時テキストの色
+  Color get _dateColor {
+    if (task.isDone) return Colors.grey;
+    if (_isOverdue || _isToday) return _statusColor;
+    return Colors.grey.shade500;
   }
 
   @override
@@ -51,7 +58,6 @@ class TaskCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        // 左側のラインは科目カラー
         border: Border(
           left: BorderSide(color: _subjectColor, width: 4),
         ),
@@ -78,7 +84,7 @@ class TaskCard extends StatelessWidget {
                   shape: BoxShape.circle,
                   color: task.isDone ? _subjectColor : Colors.transparent,
                   border: Border.all(
-                    color: task.isDone ? _subjectColor : _statusColor,
+                    color: task.isDone ? _subjectColor : Colors.grey.shade400,
                     width: 2,
                   ),
                 ),
@@ -92,12 +98,13 @@ class TaskCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 科目名バッジ（科目カラーで表示）
+                  // 科目名バッジ（科目カラー）
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Color((_subjectColor.value & 0x00FFFFFF) | 0x1A000000),
+                      color: Color(
+                          (_subjectColor.value & 0x00FFFFFF) | 0x1A000000),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
@@ -125,16 +132,16 @@ class TaskCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  // 締切日時と状態バッジ
+                  // 締切日時（通常はグレー、今日・締切切れのみ色付き）
                   Row(
                     children: [
-                      Icon(Icons.schedule, size: 13, color: _statusColor),
+                      Icon(Icons.schedule, size: 13, color: _dateColor),
                       const SizedBox(width: 4),
                       Text(
                         '${DateFormat('M月d日').format(task.dueDate)} ${task.dueTime}',
                         style: TextStyle(
                           fontSize: 12,
-                          color: _statusColor,
+                          color: _dateColor,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

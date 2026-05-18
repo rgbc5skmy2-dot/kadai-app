@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/task.dart';
 import 'task_form_screen.dart';
 import '../widgets/task_card.dart';
+import 'calendar_screen.dart';
 
 class TaskListScreen extends StatefulWidget {
   const TaskListScreen({super.key});
@@ -12,14 +13,23 @@ class TaskListScreen extends StatefulWidget {
   State<TaskListScreen> createState() => _TaskListScreenState();
 }
 
-class _TaskListScreenState extends State<TaskListScreen> {
+class _TaskListScreenState extends State<TaskListScreen>
+    with SingleTickerProviderStateMixin {
   List<Task> _tasks = [];
   bool _isLoading = true;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
     _loadTasks();
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadTasks() async {
@@ -41,7 +51,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
     await prefs.setString('tasks', tasksJson);
   }
 
-  // 登録済みの科目リストを取得（重複なし・登録順）
   List<String> get _subjects {
     final seen = <String>{};
     return _tasks
@@ -50,6 +59,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
         .toList();
   }
 
+  // 締切順に並び替え
   List<Task> get _sortedTasks {
     final sorted = List<Task>.from(_tasks);
     sorted.sort((a, b) {
@@ -57,7 +67,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
       final bIsToday = _isToday(b.dueDate);
       if (aIsToday && !bIsToday) return -1;
       if (!aIsToday && bIsToday) return 1;
-      // 日付が同じ場合は時間で並び替え
       if (a.dueDate == b.dueDate) {
         return a.dueTime.compareTo(b.dueTime);
       }
@@ -119,7 +128,6 @@ class _TaskListScreenState extends State<TaskListScreen> {
     }
 
     final incompleteTasks = _sortedTasks.where((t) => !t.isDone).toList();
-    final completedTasks = _sortedTasks.where((t) => t.isDone).toList();
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6FA),
@@ -152,6 +160,18 @@ class _TaskListScreenState extends State<TaskListScreen> {
             ),
           ),
         ],
+        bottom: TabBar(
+          controller: _tabController,
+          indicatorColor: const Color(0xFF3D5AFE),
+          labelColor: const Color(0xFF3D5AFE),
+          unselectedLabelColor: Colors.grey,
+          labelStyle: const TextStyle(fontWeight: FontWeight.w700),
+          tabs: const [
+            Tab(text: 'すべて'),
+            Tab(text: '科目別'),
+            Tab(text: 'カレンダー'),
+          ],
+        ),
       ),
       body: _tasks.isEmpty
           ? Center(
@@ -177,33 +197,19 @@ class _TaskListScreenState extends State<TaskListScreen> {
                 ],
               ),
             )
-          : ListView(
-              padding: const EdgeInsets.only(top: 8, bottom: 80),
+          : TabBarView(
+              controller: _tabController,
               children: [
-                if (incompleteTasks.isNotEmpty) ...[
-                  _SectionHeader(
-                      label: '未完了', count: incompleteTasks.length),
-                  ...incompleteTasks.map((task) => TaskCard(
-                        task: task,
-                        subjects: _subjects,
-                        onEdit: () => _openForm(task: task),
-                        onDelete: () => _deleteTask(task.id),
-                        onToggleDone: () => _toggleDone(task.id),
-                      )),
-                ],
-                if (completedTasks.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  _SectionHeader(
-                      label: '完了済み', count: completedTasks.length),
-                  ...completedTasks.map((task) => TaskCard(
-                        task: task,
-                        subjects: _subjects,
-                        onEdit: () => _openForm(task: task),
-                        onDelete: () => _deleteTask(task.id),
-                        onToggleDone: () => _toggleDone(task.id),
-                      )),
-                ],
-              ],
+                _buildAllTab(),
+                _buildSubjectTab(),
+                CalendarScreen(
+                  tasks: _tasks,
+                  subjects: _subjects,
+                  onToggleDone: _toggleDone,
+                  onDelete: _deleteTask,
+                  onEdit: (task) => _openForm(task: task),
+              ),
+            ],
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openForm(),
@@ -214,6 +220,118 @@ class _TaskListScreenState extends State<TaskListScreen> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
       ),
+    );
+  }
+
+  // すべてタブ：締切順に表示
+  Widget _buildAllTab() {
+    final incomplete = _sortedTasks.where((t) => !t.isDone).toList();
+    final completed = _sortedTasks.where((t) => t.isDone).toList();
+
+    return ListView(
+      padding: const EdgeInsets.only(top: 8, bottom: 80),
+      children: [
+        if (incomplete.isNotEmpty) ...[
+          _SectionHeader(label: '未完了', count: incomplete.length),
+          ...incomplete.map((task) => TaskCard(
+                task: task,
+                subjects: _subjects,
+                onEdit: () => _openForm(task: task),
+                onDelete: () => _deleteTask(task.id),
+                onToggleDone: () => _toggleDone(task.id),
+              )),
+        ],
+        if (completed.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          _SectionHeader(label: '完了済み', count: completed.length),
+          ...completed.map((task) => TaskCard(
+                task: task,
+                subjects: _subjects,
+                onEdit: () => _openForm(task: task),
+                onDelete: () => _deleteTask(task.id),
+                onToggleDone: () => _toggleDone(task.id),
+              )),
+        ],
+      ],
+    );
+  }
+
+  // 科目別タブ：科目ごとにまとめて表示
+  Widget _buildSubjectTab() {
+    if (_subjects.isEmpty) {
+      return Center(
+        child: Text(
+          '課題がありません',
+          style: TextStyle(fontSize: 16, color: Colors.grey[400]),
+        ),
+      );
+    }
+
+    return ListView(
+      padding: const EdgeInsets.only(top: 8, bottom: 80),
+      children: _subjects.map((subject) {
+        final subjectTasks = _sortedTasks
+            .where((t) => t.subject == subject)
+            .toList();
+        final incomplete = subjectTasks.where((t) => !t.isDone).toList();
+        final completed = subjectTasks.where((t) => t.isDone).toList();
+        final color = getSubjectColor(subject, _subjects);
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 科目ヘッダー
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: Row(
+                children: [
+                  Container(
+                    width: 12,
+                    height: 12,
+                    decoration: BoxDecoration(
+                      color: color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    subject,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${incomplete.length}件未完了',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey[500],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            // 科目の課題一覧
+            ...incomplete.map((task) => TaskCard(
+                  task: task,
+                  subjects: _subjects,
+                  onEdit: () => _openForm(task: task),
+                  onDelete: () => _deleteTask(task.id),
+                  onToggleDone: () => _toggleDone(task.id),
+                )),
+            ...completed.map((task) => TaskCard(
+                  task: task,
+                  subjects: _subjects,
+                  onEdit: () => _openForm(task: task),
+                  onDelete: () => _deleteTask(task.id),
+                  onToggleDone: () => _toggleDone(task.id),
+                )),
+            const Divider(height: 24),
+          ],
+        );
+      }).toList(),
     );
   }
 }

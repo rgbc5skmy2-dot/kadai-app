@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <CustomBuild Include="C:\flutter_projects\kadai_app\build\windows\x64\CMakeFiles\608fd5ebd67d3a59f22029b2be708de4\INSTALL_force.rule">
+    <CustomBuild Include="C:\Users\mako_\flutter_projects\kadai_app\build\windows\x64\CMakeFiles\744a90450aa012b3fd0adf123c38d6c9\INSTALL_force.rule">
       <Filter>CMake Rules</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CMake Rules">
-      <UniqueIdentifier>{CD3682D3-A75E-3369-ACEC-9556F8B0CE2F}</UniqueIdentifier>
+      <UniqueIdentifier>{1D67C3FD-1502-34B5-ACFC-E02AB47B1B83}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

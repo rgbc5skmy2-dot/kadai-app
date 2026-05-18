@@ -6,26 +6,26 @@
 		<BuildType Name="Release"/>
 		<Platform Name="x64"/>
 	</Configurations>
-	<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="b44e58ac-f544-3f6f-b435-5572713fb683" DefaultStartup="true">
+	<Project Path="ALL_BUILD.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="25a05aa9-740b-31ec-adea-94b3f4967353" DefaultStartup="true">
 		<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
 		<BuildDependency Project="kadai_app.vcxproj"/>
 	</Project>
-	<Project Path="INSTALL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="2894dd43-b9e8-318a-94ab-8a5135d181d4">
+	<Project Path="INSTALL.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="bad0ef9a-ed24-31d0-9ddd-1cb21501b2a8">
 		<BuildDependency Project="ALL_BUILD.vcxproj"/>
 		<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
 		<Build Solution="Debug|*" Project="false"/>
 		<Build Solution="Profile|*" Project="false"/>
 		<Build Solution="Release|*" Project="false"/>
 	</Project>
-	<Project Path="../ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="6f1eea9f-6beb-3629-9eb0-331e7d86db28"/>
-	<Project Path="../flutter/flutter_assemble.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="47721c6f-c063-3a39-9224-74a4e14bc181">
+	<Project Path="../ZERO_CHECK.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="b64630c2-430b-378a-97a0-dc6971b46c53"/>
+	<Project Path="../flutter/flutter_assemble.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e2077a25-21e9-3530-954c-6f0c5de15703">
 		<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
 	</Project>
-	<Project Path="../flutter/flutter_wrapper_app.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="ea3ebc50-255f-3dfc-9b3e-b41a4f0c0a78">
+	<Project Path="../flutter/flutter_wrapper_app.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="c1ca072d-8b9c-3930-b3ea-63bfb3b7039d">
 		<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
 		<BuildDependency Project="../flutter/flutter_assemble.vcxproj"/>
 	</Project>
-	<Project Path="kadai_app.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="e2d92a33-e2ca-3994-8d71-6a5953f66a18">
+	<Project Path="kadai_app.vcxproj" Type="8bc9ceb8-8b4a-11d0-8d11-00a0c91bc942" Id="c312a471-086c-3c08-a5b0-521389ae7a99">
 		<BuildDependency Project="../ZERO_CHECK.vcxproj"/>
 		<BuildDependency Project="../flutter/flutter_assemble.vcxproj"/>
 		<BuildDependency Project="../flutter/flutter_wrapper_app.vcxproj"/>

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'screens/task_list_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('ja_JP', null); // 日本語ロケール初期化
   runApp(const MyApp());
 }
 
@@ -31,12 +34,10 @@ class ResponsiveWrapper extends StatelessWidget {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
 
-    // スマホサイズ（600px以下）はそのまま全画面
     if (width <= 600) {
       return const TaskListScreen();
     }
 
-    // PC・タブレットはスマホサイズに制限して中央に表示
     return Scaffold(
       backgroundColor: const Color(0xFFE8EAF6),
       body: Center(
