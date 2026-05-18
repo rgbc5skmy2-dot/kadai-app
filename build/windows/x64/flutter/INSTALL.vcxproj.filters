@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="18.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\flutter_projects\kadai_app\build\windows\x64\CMakeFiles\f951a5c5e886191a7613183a51199d88\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{CD3682D3-A75E-3369-ACEC-9556F8B0CE2F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
