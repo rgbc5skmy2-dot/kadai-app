@@ -88108,7 +88108,7 @@ $1(a){return"fallback"},
 $S:111}
 A.M0.prototype={
 G(a){var s=null
-return new A.A_(B.a4U,"\u8ab2\u984c\u7ba1\u7406\u30a2\u30d7\u30ea",A.v6(s,A.ays(B.at,s,s,B.a2e),!0),!1,s)}}
+return new A.A_(B.a4U,"Submitr",A.v6(s,A.ays(B.at,s,s,B.a2e),!0),!1,s)}}
 A.Ns.prototype={
 G(a){var s=null
 if(A.aa(a,s,t.l).w.a.a<=600)return B.Jk
@@ -97000,7 +97000,7 @@ B.abw=new A.k(!0,null,null,null,null,null,18,null,null,null,null,null,null,null,
 B.ad4=new A.iR("\u4fdd\u5b58\u3059\u308b",null,B.abw,null,null,null,null,null,null,null,null)
 B.ad6=new A.iR("\u65e5\u4ed8\u3092\u9078\u3076",null,null,null,null,null,null,null,null,null,null)
 B.aa3=new A.k(!0,B.im,null,null,null,null,24,B.bR,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
-B.ad7=new A.iR("\u8ab2\u984c\u7ba1\u7406",null,B.aa3,null,null,null,null,null,null,null,null)
+B.ad7=new A.iR("Submitr",null,B.aa3,null,null,null,null,null,null,null,null)
 B.aak=new A.k(!0,B.n,null,null,null,null,null,B.bQ,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.ad8=new A.iR("\u8ab2\u984c\u3092\u8ffd\u52a0",null,B.aak,null,null,null,null,null,null,null,null)
 B.agR=new A.ag4(0,"system")

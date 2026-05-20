@@ -134,7 +134,7 @@ class _TaskListScreenState extends State<TaskListScreen>
         backgroundColor: const Color(0xFFF5F6FA),
         elevation: 0,
         title: const Text(
-          '課題管理',
+          'Submitr',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w700,
